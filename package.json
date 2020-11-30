@@ -10,8 +10,8 @@
   },
   "keywords": [
     "twirp",
-    "protocol",
-    "buffers",
+    "protocol buffers",
+    "protobufs",
     "typescript"
   ],
   "author": "Drew Trafton <dtraft@gmail.com>",
