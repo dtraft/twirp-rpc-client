@@ -11,7 +11,7 @@ Install using npm:
 
 `npm install --save twirp-rpc-client`
 
-Generate your service code using the (protobuf compiler)[https://github.com/protocolbuffers/protobuf] and [ts-proto](https://github.com/stephenh/ts-proto).
+Generate your service code using the [protobuf compiler](https://github.com/protocolbuffers/protobuf) and [ts-proto](https://github.com/stephenh/ts-proto).
 
 For example: `protoc --plugin=node_modules/ts-proto/protoc-gen-ts_proto example/service.proto -I./example --ts_proto_out=./example`
 
