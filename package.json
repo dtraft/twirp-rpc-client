@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "description": "Typescript twirp client built for use with ts-proto",
   "main": "dist/index.js",
+  "files": [
+    "dist/**/*"
+  ],
   "scripts": {
     "test": "jest",
     "coverage": "jest --coverage",
