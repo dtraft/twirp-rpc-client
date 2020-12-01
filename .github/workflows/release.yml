@@ -1,9 +1,9 @@
-name: Package and release
+name: Package and Release
 on:
   release:
     types: [created]
 jobs:
-  build:
+  release:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
