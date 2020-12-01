@@ -5,6 +5,7 @@
   "main": "dist/index.js",
   "scripts": {
     "test": "jest",
+    "coverage": "jest --coverage",
     "prettier": "prettier --write src/**/*.ts",
     "prettier:check": "prettier --check src/**/*.ts",
     "build": "tsc",
