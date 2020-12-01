@@ -1,27 +1,27 @@
-import { AxiosResponse } from "axios";
+import { AxiosResponse } from 'axios';
 
 /**
  * This module provides Twirp errors according to the Twirp spec.
  */
 
-type TwirpErrorMeta = {[key: string]: any}
+type TwirpErrorMeta = { [key: string]: any };
 
 export interface ITwirpError {
-  msg: string
-  code: TwirpErrorCode
-  meta: TwirpErrorMeta
+  msg: string;
+  code: TwirpErrorCode;
+  meta: TwirpErrorMeta;
 }
 
-export class TwirpError extends Error implements ITwirpError{
-  msg: string
-  code: TwirpErrorCode
-  meta: TwirpErrorMeta
+export class TwirpError extends Error implements ITwirpError {
+  msg: string;
+  code: TwirpErrorCode;
+  meta: TwirpErrorMeta;
 
   constructor(code: TwirpErrorCode, msg: string, meta: TwirpErrorMeta) {
-    super(msg)
-    this.code = code
-    this.msg = msg
-    this.meta = meta
+    super(msg);
+    this.code = code;
+    this.msg = msg;
+    this.meta = meta;
   }
 }
 
@@ -115,10 +115,10 @@ export enum TwirpErrorCode {
 // twirpErrorFromIntermediary maps HTTP errors from non-twirp sources to twirp errors.
 // The mapping is similar to gRPC: https://github.com/grpc/grpc/blob/master/doc/http-grpc-status-mapping.md.
 export function twirpErrorFromResponse(response: AxiosResponse<Uint8Array>): TwirpError {
-  const parsedError = JSON.parse(response.data.toString()) as TwirpError
-  const code = parsedError?.code ?? TwirpErrorCode.Internal
-  const msg = parsedError?.msg ?? ""
-  const meta = parsedError?.meta ?? {}
+  const parsedError = JSON.parse(response.data.toString()) as TwirpError;
+  const code = parsedError?.code ?? TwirpErrorCode.Internal;
+  const msg = parsedError?.msg ?? '';
+  const meta = parsedError?.meta ?? {};
 
-  return new TwirpError(code, msg, meta)
+  return new TwirpError(code, msg, meta);
 }

@@ -25,10 +25,15 @@ jobs:
           CI: true
       - name: build
         run: npm build
-      - name: test
-        run: npm run test
+
+      - uses: mattallty/jest-github-action@v1
         env:
-          CI: true
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          # To avoid reporting code coverage, set this variable to false
+          coverage-comment: false
+          test-command: "npm run coverage"
+
       - name: Coveralls
         uses: coverallsapp/github-action@master
         with:

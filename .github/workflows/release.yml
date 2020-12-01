@@ -1,4 +1,4 @@
-name: Package amd release
+name: Package and release
 on:
   release:
     types: [created]
