@@ -1,4 +1,4 @@
-name: Lint
+name: Build
 on:
   pull_request:
   push:
@@ -6,12 +6,12 @@ on:
       - master
 
 jobs:
-  prettier:
+  build:
     runs-on: ubuntu-latest
 
     strategy:
       matrix:
-        node-version: [12.x]
+        node-version: [12.x, 14.x]
 
     steps:
       - uses: actions/checkout@v1
@@ -21,7 +21,9 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - name: install dependencies
         run: npm install
-      - name: Prettier
-        run: npm run prettier:check
+      - name: build
+        run: npm build
+      - name: test
+        run: npm run test
         env:
           CI: true

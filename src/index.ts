@@ -1,5 +1,5 @@
-import axios, { AxiosInstance, AxiosResponse } from 'axios';
-import { twirpErrorFromHttpStatus } from './errors';
+import axios, { AxiosError, AxiosInstance, AxiosResponse } from "axios";
+import { twirpErrorFromResponse } from "./errors";
 
 export * from './errors';
 
@@ -9,43 +9,43 @@ export interface Rpc {
 
 export interface TwirpClientProps {
   url: string;
-  headers?: { [key: string]: string };
+  headers?: object;
   timeout?: number;
-  withCredentials?: boolean;
   auth?: {
     username: string;
     password: string;
   };
-  maxRedirects?: number;
 }
 
 class TwirpProtobufClient {
   private axiosClient: AxiosInstance;
 
   constructor({ url, headers, ...config }: TwirpClientProps) {
+
     this.axiosClient = axios.create({
       ...config,
       baseURL: url,
       headers: {
         ...headers,
-        accept: 'application/protobuf',
-        'content-type': 'application/protobuf',
+        accept: 'application/*',
+        'content-type': 'application/protobuf'
       },
-      responseType: 'arraybuffer',
-      validateStatus: function (status) {
-        return true; // default
-      },
+      responseType: 'arraybuffer'
     });
   }
 
   request(service: string, method: string, data: Uint8Array): Promise<Uint8Array> {
-    return this.axiosClient.post(`/${service}/${method}`, data).then((response: AxiosResponse<Uint8Array>) => {
-      if (response.status != 200) {
-        throw twirpErrorFromHttpStatus(response.status);
-      } else {
-        return response.data;
-      }
-    });
+    return this.axiosClient.post(`/${service}/${method}`, data)
+      .then((response: AxiosResponse<Uint8Array>) => {
+        return response.data
+      })
+      .catch((error: AxiosError) => {
+        if(error.response != undefined){
+          throw twirpErrorFromResponse(error.response)
+        }else {
+          throw error
+        }
+      })
   }
 }
 

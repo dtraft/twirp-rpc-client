@@ -1,15 +1,31 @@
+import { AxiosResponse } from "axios";
+
 /**
  * This module provides Twirp errors according to the Twirp spec.
  */
 
-export class TwirpError extends Error {
-  public statusCode = 500;
-  public message: string = this.message;
-  public name = 'internal';
-  public isTwirpError: true = true;
+type TwirpErrorMeta = {[key: string]: any}
+
+export interface ITwirpError {
+  msg: string
+  code: TwirpErrorCode
+  meta: TwirpErrorMeta
 }
 
-enum TwirpErrorCode {
+export class TwirpError extends Error implements ITwirpError{
+  msg: string
+  code: TwirpErrorCode
+  meta: TwirpErrorMeta
+
+  constructor(code: TwirpErrorCode, msg: string, meta: TwirpErrorMeta) {
+    super(msg)
+    this.code = code
+    this.msg = msg
+    this.meta = meta
+  }
+}
+
+export enum TwirpErrorCode {
   // Canceled indicates the operation was cancelled (typically by the caller).
   Canceled = 'canceled',
 
@@ -96,79 +112,13 @@ enum TwirpErrorCode {
   DataLoss = 'data_loss',
 }
 
-// NotFoundError for the common NotFound error.
-export class NotFoundError extends TwirpError {
-  statusCode = 404;
-  name = TwirpErrorCode.NotFound;
-}
-
-// InvalidArgumentError constructor for the common InvalidArgument error. Can be
-// used when an argument has invalid format, is a number out of range, is a bad
-// option, etc).
-export class InvalidArgumentError extends TwirpError {
-  statusCode = 400;
-  name = TwirpErrorCode.InvalidArgument;
-}
-
-// RequiredArgumentError is a more specific constructor for InvalidArgument
-// error. Should be used when the argument is required (expected to have a
-// non-zero value).
-export class RequiredArgumentError extends TwirpError {
-  statusCode = 400;
-  name = TwirpErrorCode.InvalidArgument;
-  constructor(argumentName: string) {
-    super(`${argumentName} is required`);
-  }
-}
-
-// InternalError constructor for the common Internal error. Should be used to
-// specify that something bad or unexpected happened.
-export class InternalServerError extends TwirpError {
-  statusCode = 500;
-  name = TwirpErrorCode.Internal;
-}
-
-// badRouteError is used when the twirp server cannot route a request`)
-export class BadRouteError extends TwirpError {
-  statusCode = 404;
-  name = TwirpErrorCode.BadRoute;
-}
-
 // twirpErrorFromIntermediary maps HTTP errors from non-twirp sources to twirp errors.
 // The mapping is similar to gRPC: https://github.com/grpc/grpc/blob/master/doc/http-grpc-status-mapping.md.
-export function twirpErrorFromHttpStatus(
-  status: number
-  // msg: string,
-  // bodyOrLocation: string,
-): TwirpErrorCode {
-  let code = TwirpErrorCode.Unknown;
-  if (status >= 300 && status <= 399) {
-    code = TwirpErrorCode.Internal;
-  } else {
-    switch (status) {
-      case 400: // Bad Request
-        code = TwirpErrorCode.Internal;
-        break;
-      case 401: // Unauthorized
-        code = TwirpErrorCode.Unauthenticated;
-        break;
-      case 403: // Forbidden
-        code = TwirpErrorCode.PermissionDenied;
-        break;
-      case 404: // Not Found
-        code = TwirpErrorCode.BadRoute;
-        break;
-      case 429: // Too Many Requests
-      case 502: // Bad Gateway
-      case 503: // Service Unavailable
-      case 504: // Gateway Timeout
-        code = TwirpErrorCode.Unavailable;
-        break;
-      default:
-        // All other codes
-        code = TwirpErrorCode.Unknown;
-    }
-  }
+export function twirpErrorFromResponse(response: AxiosResponse<Uint8Array>): TwirpError {
+  const parsedError = JSON.parse(response.data.toString()) as TwirpError
+  const code = parsedError?.code ?? TwirpErrorCode.Internal
+  const msg = parsedError?.msg ?? ""
+  const meta = parsedError?.meta ?? {}
 
-  return code;
+  return new TwirpError(code, msg, meta)
 }
