@@ -8,9 +8,10 @@ export interface Rpc {
 }
 
 export interface TwirpClientProps {
-  url: string;
-  headers?: object;
-  timeout?: number;
+  url: string; // base url of the twirp service
+  headers?: object; // additional headers to add to the request e.g. { "x-custom-header": "header-value" }
+  timeout?: number; // timeout in milliseconds
+  // basic auth helper
   auth?: {
     username: string;
     password: string;

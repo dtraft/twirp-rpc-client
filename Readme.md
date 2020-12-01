@@ -33,6 +33,19 @@ haberdasherClient.MakeHat({inches: 12})
 
 For more details, see the docs regarding [ts-proto service generation](https://github.com/stephenh/ts-proto#current-disclaimers).
 
+### Configuration Options
+
+```typescript
+TwirpClientProps {
+  url: string; // base url of the twirp service
+  headers?: object; // additional headers to add to the request e.g. { "x-custom-header": "header-value" }
+  timeout?: number; // timeout in milliseconds
+  auth?: { // basic auth helper
+    username: string;
+    password: string;
+  };
+}
+```
 ## Current Limitations
 * Only supports protocol buffer serialization from twirp services.  This is because ts-proto currently only generates protobuf service client implementations.
 
