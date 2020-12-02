@@ -112,9 +112,7 @@ export enum TwirpErrorCode {
   DataLoss = 'data_loss',
 }
 
-
-
-const STATUS_CODE_MAP: { [key: number]: TwirpErrorCode} = {
+const STATUS_CODE_MAP: { [key: number]: TwirpErrorCode } = {
   400: TwirpErrorCode.InvalidArgument,
   403: TwirpErrorCode.PermissionDenied,
   404: TwirpErrorCode.NotFound,
@@ -124,16 +122,16 @@ const STATUS_CODE_MAP: { [key: number]: TwirpErrorCode} = {
   429: TwirpErrorCode.ResourceExhausted,
   500: TwirpErrorCode.Internal,
   501: TwirpErrorCode.Unimplemented,
-  503: TwirpErrorCode.Unavailable
-}
+  503: TwirpErrorCode.Unavailable,
+};
 
 // twirpErrorFromIntermediary maps HTTP errors from non-twirp sources to twirp errors.
 // The mapping is similar to gRPC: https://github.com/grpc/grpc/blob/master/doc/http-grpc-status-mapping.md.
 export function twirpErrorFromResponse(response: AxiosResponse<Uint8Array>): TwirpError {
-  const status = response.status
+  const status = response.status;
   const fallbackCode = STATUS_CODE_MAP[status] ?? TwirpErrorCode.Internal;
 
-  try{
+  try {
     const parsedError = JSON.parse(response.data.toString()) as TwirpError;
 
     const code = parsedError?.code ?? fallbackCode;
@@ -141,9 +139,6 @@ export function twirpErrorFromResponse(response: AxiosResponse<Uint8Array>): Twi
     const meta = parsedError?.meta ?? {};
     return new TwirpError(code, msg, meta);
   } catch (e) {
-    return new TwirpError(fallbackCode, '', {})
+    return new TwirpError(fallbackCode, '', {});
   }
-
-
-
 }

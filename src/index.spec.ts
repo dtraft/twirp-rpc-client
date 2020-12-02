@@ -135,9 +135,7 @@ describe('TwirpProtobufClient', () => {
   });
 
   test('handles an empty response', async () => {
-    const scope = nock(mockServiceUrl)
-      .post('/twitch.twirp.example.Haberdasher/MakeHat', requestData)
-      .reply(412);
+    const scope = nock(mockServiceUrl).post('/twitch.twirp.example.Haberdasher/MakeHat', requestData).reply(412);
 
     await client
       .request('twitch.twirp.example.Haberdasher', 'MakeHat', requestData)
