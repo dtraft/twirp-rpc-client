@@ -27,7 +27,7 @@ class TwirpProtobufClient {
       baseURL: url,
       headers: {
         ...headers,
-        accept: 'application/*',
+        accept: 'application/protobuf,application/json',
         'content-type': 'application/protobuf',
       },
       responseType: 'arraybuffer',
