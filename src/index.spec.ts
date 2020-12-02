@@ -19,7 +19,7 @@ describe('TwirpProtobufClient', () => {
       .reply(200, responseData);
 
     scope.on('request', (req) => {
-      expect(req['headers']['accept']).toEqual('application/*');
+      expect(req['headers']['accept']).toEqual('application/protobuf,application/json');
       expect(req['headers']['content-type']).toEqual('application/protobuf');
       expect(req['requestBodyBuffers'][0]).toEqual(requestData);
     });
@@ -49,7 +49,7 @@ describe('TwirpProtobufClient', () => {
       // expect(req['headers']['authorization']).toEqual('Basic dXNlcm5hbWU6cGFzc3dvcmQ=')
       expect(req['headers']['x-example-header']).toEqual('test');
       expect(req['headers']['content-type']).toEqual('application/protobuf');
-      expect(req['headers']['accept']).toEqual('application/*');
+      expect(req['headers']['accept']).toEqual('application/protobuf,application/json');
     });
 
     await expect(configuredClient.request('twitch.twirp.example.Haberdasher', 'MakeHat', requestData)).resolves.toEqual(
@@ -109,6 +109,42 @@ describe('TwirpProtobufClient', () => {
         expect(error.meta).toEqual({
           nested: 'data',
         });
+      });
+  });
+
+  test('falls back to http status code when no error code is provided', async () => {
+    const scope = nock(mockServiceUrl)
+      .post('/twitch.twirp.example.Haberdasher/MakeHat', requestData)
+      .reply(412, {
+        msg: 'precondition failed',
+        meta: {
+          nested: 'data',
+        },
+      });
+
+    await client
+      .request('twitch.twirp.example.Haberdasher', 'MakeHat', requestData)
+      .then(() => fail('should throw an exception'))
+      .catch((error: TwirpError) => {
+        expect(error).toBeInstanceOf(TwirpError);
+        expect(error.code).toEqual(TwirpErrorCode.FailedPrecondition);
+        expect(error.meta).toEqual({
+          nested: 'data',
+        });
+      });
+  });
+
+  test('handles an empty response', async () => {
+    const scope = nock(mockServiceUrl)
+      .post('/twitch.twirp.example.Haberdasher/MakeHat', requestData)
+      .reply(412);
+
+    await client
+      .request('twitch.twirp.example.Haberdasher', 'MakeHat', requestData)
+      .then(() => fail('should throw an exception'))
+      .catch((error: TwirpError) => {
+        expect(error).toBeInstanceOf(TwirpError);
+        expect(error.code).toEqual(TwirpErrorCode.FailedPrecondition);
       });
   });
 });
