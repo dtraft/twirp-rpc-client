@@ -1,6 +1,6 @@
 
 import {HaberdasherClientImpl, Hat} from './generated/service'
-import twirpProtobufClient from "../src";
+import twirpProtobufClient from "../src/protobuf-client";
 
 const haberdasherClient = new HaberdasherClientImpl(twirpProtobufClient({
         url: "https://localhost:3000/twirp"

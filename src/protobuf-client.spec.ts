@@ -1,5 +1,5 @@
 import axios, { AxiosError } from 'axios';
-import twirpProtobufClient, { TwirpError, TwirpErrorCode } from './index';
+import twirpProtobufClient, { TwirpError, TwirpErrorCode } from './protobuf-client';
 import nock, { Body } from 'nock';
 
 const mockServiceUrl = 'https://example.com/twirp';
