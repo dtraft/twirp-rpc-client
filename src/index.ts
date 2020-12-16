@@ -1,2 +1,2 @@
-export * from './protobuf-client'
-export * from './errors'
+export * from './protobuf-client';
+export * from './errors';
