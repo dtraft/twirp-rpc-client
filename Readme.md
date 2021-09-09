@@ -44,6 +44,7 @@ TwirpClientProps {
     username: string;
     password: string;
   };
+  withCredentials: bool; // whether cross-site Access-Control requests should be made using credentials
 }
 ```
 ## Current Limitations
