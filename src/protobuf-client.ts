@@ -38,7 +38,12 @@ class TwirpProtobufClient {
     return this.axiosClient
       .post(`/${service}/${method}`, data)
       .then((response: AxiosResponse<Buffer>) => {
-        return Buffer ? Buffer.from(response.data) : new Uint8Array(response.data);
+        try {
+          Buffer;
+        } catch(e) {
+          return new Uint8Array(response.data);
+        }
+        return Buffer.from(response.data);
       })
       .catch((error: AxiosError) => {
         if (error.response != undefined) {
